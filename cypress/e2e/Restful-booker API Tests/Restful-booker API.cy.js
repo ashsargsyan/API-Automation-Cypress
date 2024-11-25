@@ -17,7 +17,7 @@ describe('Resful-booker APIs', () => {
         additionalneeds : "Breakfast"
     }
 
-    it('Create Token', () => {
+    it('Create Token, Create Booking ID and Get Booking ID', () => {
         cy.request({
             method: 'POST',
             url: 'https://restful-booker.herokuapp.com/auth',
@@ -27,17 +27,15 @@ describe('Resful-booker APIs', () => {
             expect(response.body.token).exist;
             token = response.body.token;
             cy.log(token);
-        })
-    });
-
-    it('Create Booking request ', () => {
-        cy.request({
-            method: 'POST',
-            url: 'https://restful-booker.herokuapp.com/booking',
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            body: userInfo,
+        }).then(() => {
+            cy.request({
+                method: 'POST',
+                url: 'https://restful-booker.herokuapp.com/booking',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: userInfo,
+            })
         }).then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body.booking).to.have.property('firstname');
@@ -47,13 +45,11 @@ describe('Resful-booker APIs', () => {
             bookingId = response.body.bookingid;
             cy.log(bookingId);
             cy.log(token);
-        })
-    });
-
-    it('Get Booking Id ', () => {
-        cy.request({
-            method: 'GET',
-            url: `https://restful-booker.herokuapp.com/booking/${bookingId}`
+        }).then(() => {
+            cy.request({
+                method: 'GET',
+                url: `https://restful-booker.herokuapp.com/booking/${bookingId}`
+            })
         }).then((response) => {
             expect(response.status).to.eq(200);
             expect(response.body).to.have.property('firstname');
